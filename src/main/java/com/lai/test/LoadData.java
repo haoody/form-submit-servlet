@@ -44,6 +44,7 @@ public class LoadData extends HttpServlet {
             }
             data = tempList;
         }
+        System.out.println();
         resp.getWriter().write(JSON.toJSONString(data));
         resp.getWriter().close();
     }
