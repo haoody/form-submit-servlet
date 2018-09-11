@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>test form submit</title>
+    <link rel="stylesheet" href="webjars/bootstrap/4.1.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-3">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">打开form窗口</button>
+        <button id="turntoform" type="button" class="btn btn-success">跳转form页面</button>
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="输入查询条件" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2">查询</button>
+            </div>
+        </div>
+    </div>
+    <table class="table table-hover mt-3">
+        <thead>
+        <tr>
+            <th scope="col">编号</th>
+            <th scope="col">名称</th>
+            <th scope="col">说明</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ajax方式提交数据</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ajaxform">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">名称:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">说明:</label>
+                        <textarea class="form-control" id="message-text" name="descript"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button id="subajax" type="button" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript" src="webjars/jquery/3.0.0/jquery.min.js"></script>
+<script language="JavaScript" src="webjars/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script language="JavaScript" src="webjars/jquery-form/4.2.1/jquery.form.min.js"></script>
+<script language="JavaScript">
+    function subformData() { // ajax异步提交数据
+        $('#ajaxform').ajaxSubmit({
+            url: "/saveAjax",
+            method: "POST",
+            success: function (data) {
+                if (data === 'success') {
+                    // 保存成功执行关闭窗口，并重新加载数据
+                    $('#exampleModal').modal('hide');
+                    $('#ajaxform').resetForm();
+                    loadData();
+                }
+            }
+        });
+    }
+    function loadData() { // ajax加载数据方法
+        var data = {};
+        var name = $("#recipient-name").val();
+        if(name!=''){
+            data['name'] = name;
+        }
+        $.getJSON( "/getdata", data).done(function( data ) {
+            var items = [];
+            var i = 1;
+            $.each( data, function(key, val) {
+                items.push("<tr>" +
+                                "<th scope=\"row\">"+val.id+"</th>" +
+                                "<td>"+val.name+"</td>" +
+                                "<td>"+val.descript+"</td>" +
+                            "</tr>");
+            });
+            $("#tableBody").html(items.join(""));
+        });
+    }
+    $(function(){
+        // 页面初始化事件
+        $("#turntoform").on('click', function (e) {
+            e.preventDefault();
+            window.location.href = "/form";
+        });
+        $("#subajax").on('click', function (e) {
+            e.preventDefault();
+            subformData();
+        });
+        $("#button-addon2").on('click', function (e) {
+            e.preventDefault();
+            loadData();
+        });
+        loadData();
+    });
+</script>
+</body>
+</html>

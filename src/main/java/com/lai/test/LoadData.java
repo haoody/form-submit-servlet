@@ -1,0 +1,50 @@
+/*
+ *  Licensed to the Shenzhen Zhouxun Information Technology Co., Ltd. (SZZX).
+ *  you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      https://www.zxxxjs.com/licenses/LICENSE-2.0
+ *
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package com.lai.test;
+
+import com.alibaba.fastjson.JSON;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author lai
+ * @time 2018/9/11 16:37
+ * @description
+ * @modified
+ */
+@WebServlet("/getdata")
+public class LoadData extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Content-Type", "text/html;charset=UTF-8");
+        String name = req.getParameter("name");
+        List<ObjData> data = DataFactory.getDatalist();
+        if (null != name && !"".equals(name)) {
+            List<ObjData> tempList = new ArrayList<>();
+            for (ObjData d : data) {
+                if (d.getName().indexOf(name) > -1) {
+                    tempList.add(d);
+                }
+            }
+            data = tempList;
+        }
+        resp.getWriter().write(JSON.toJSONString(data));
+        resp.getWriter().close();
+    }
+}
