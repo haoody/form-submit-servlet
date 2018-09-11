@@ -8,4 +8,4 @@ mvn jetty:run
 
 ## 效果
 
-![img](https://github.com/lai8206/form-submit-servlet/resource/show.gif)
+![img](https://github.com/lai8206/form-submit-servlet/t raw/master/resource/show.gif)
